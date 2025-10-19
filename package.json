@@ -1,0 +1,42 @@
+{
+  "name": "calsci-extension",
+  "displayName": "calsci-extension",
+  "description": "micropython calsci extension",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.105.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [  "onStartupFinished"],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "calsci.checkStatus",
+        "title": "Check Device Status"
+      },
+      {
+        "command": "calsci.showMenu",
+        "title": "calsci: Menu"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.105.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.36.0"
+  },
+  "dependencies": {
+    "serialport": "^13.0.0"
+  }
+}
