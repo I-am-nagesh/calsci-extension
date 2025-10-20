@@ -5,6 +5,8 @@ const { uploadFile } = require("./uploadManager");
 
 const { openREPL } = require("./replManager");
 
+const { getDeviceInfo } = require("./deviceManager");
+
 function activate(context) {
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -64,7 +66,7 @@ function activate(context) {
           [
             "Upload Code",
             "Open REPL",
-            "Get Device Info",
+            "Device Info",
             "Reset Device",
             "Disconnect",
           ],
@@ -109,6 +111,24 @@ function activate(context) {
           } else {
             openREPL(targetDevice.path);
           }
+        }
+
+        //getting device info
+        if (choice === "Device Info") {
+          let outputChannel = vscode.window.createOutputChannel("calsci");
+          getDeviceInfo((err, info) => {
+            if (err) {
+              vscode.window.showErrorMessage(
+                "Error getting device info: " + err
+              );
+              outputChannel.appendLine(err);
+            } else {
+              vscode.window.showInformationMessage("Device Info: " + info);
+              outputChannel.show(true);
+              outputChannel.appendLine("=== Device Info ===");
+              outputChannel.appendLine(info);
+            }
+          });
         }
 
         vscode.window.showInformationMessage(`You selected: ${choice}`);
