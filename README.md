@@ -1,65 +1,76 @@
-# calsci-extension README
+# Calsci Extension
 
-This is the README for your extension "calsci-extension". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+**Calsci Extension** is a VS Code extension for **MicroPython development on ESP32 devices**. It simplifies building, uploading, and testing small MicroPython apps, providing a friendly UI and seamless workflow for developers working with Calsci-compatible devices.
 
 ---
 
-## Working with Markdown
+## Features
 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+- **Device Connection Status:** Shows if your Calsci device (ESP32) is connected in the status bar.
+- **App Builder:** Create a new `app.py` inside a selected folder and start coding immediately.
+- **Upload Code:** Upload Python files directly to your connected ESP32 using `mpremote`.
+- **Open REPL:** Open a live REPL session to interact with your MicroPython device.
+- **Device Info:** Quickly check connected device information like firmware, memory, and more.
+- **Sidebar UI:** Easy-to-use sidebar for accessing all features with buttons for every action.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
+*Example Workflow:*
 
-## For more information
+1. Click **Make App** in the sidebar → select folder → `app.py` opens.
+2. Write your MicroPython code.
+3. Click **Upload App** to send it to the ESP32.
+4. Use **Open REPL** to interact or test the code live.
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+---
 
-**Enjoy!**
+## Requirements
+
+- **VS Code** (version 1.105.0 or higher)
+- **Node.js** for extension development
+- **SerialPort** (already included in dependencies)
+- **MicroPython-compatible ESP32 device**
+- **mpremote** installed on your system (`pip install mpremote`)
+
+---
+
+## Extension Settings
+
+This extension does not currently contribute user-configurable settings.
+
+---
+
+## Known Issues
+
+- Only tested with ESP32-based devices. Other MicroPython boards may require modifications.
+- Sidebar UI may require reloading VS Code if new commands are added.
+
+---
+
+## Release Notes
+
+### 1.0.0
+- Initial release with core features:
+  - Device connection status
+  - App builder
+  - Upload Python code
+  - Open REPL
+  - Device info
+  - Sidebar UI integration
+
+---
+
+## Getting Started
+
+After installing the extension:
+
+1. Connect your ESP32 device via USB.
+2. Open the **Calsci Sidebar** in VS Code.
+3. Use the buttons to **Make App**, **Upload App**, **Open REPL**, or view **Device Info**.
+4. Enjoy a seamless MicroPython development experience.
+
+---
+
+## Additional Resources
+
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [MicroPython Documentation](https://docs.micropython.org/)
+- [mpremote Documentation](https://docs.micropython.org/en/latest/reference/mpremote.html)
