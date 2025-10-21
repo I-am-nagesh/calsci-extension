@@ -1,7 +1,7 @@
 {
   "name": "calsci-extension",
-  "displayName": "calsci-extension",
-  "description": "micropython calsci extension",
+  "displayName": "Calsci Extension",
+  "description": "Micropython Calsci Extension",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.105.0"
@@ -9,19 +9,54 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [  "onStartupFinished"],
-  "main": "./src/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "calsci.checkStatus",
-        "title": "Check Device Status"
+        "command": "calsci.showMenu",
+        "title": "Calsci: Show Menu"
       },
       {
-        "command": "calsci.showMenu",
-        "title": "calsci: Menu"
+        "command": "calsci.checkStatus",
+        "title": "Calsci: Check Device Status"
+      },
+      {
+        "command": "calsci.makeApp",
+        "title": "Calsci: Make App"
+      },
+      {
+        "command": "calsci.uploadCode",
+        "title": "Calsci: Upload Code"
+      },
+      {
+        "command": "calsci.deviceInfo",
+        "title": "Calsci: Device Info"
+      },
+      {
+        "command": "calsci.openRepl",
+        "title": "Calsci: Open REPL"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "calsciSidebar",
+          "title": "Calsci",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "calsciSidebar": [
+        {
+          "id": "calsciView",
+          "name": "Calsci App Builder"
+        }
+      ]
+    }
   },
   "scripts": {
     "lint": "eslint .",
