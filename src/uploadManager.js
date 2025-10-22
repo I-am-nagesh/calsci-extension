@@ -19,7 +19,7 @@ async function uploadFile(port) {
     const filePath = fileUri[0].fsPath;
 
     // command to push file using mpremote
-    const cmd = `mpremote connect ${port} fs cp ${filePath} :/`;
+    const cmd = `mpremote connect ${port} fs cp ${filePath} :/installed_app/`;
 
     const terminal = vscode.window.createOutputChannel("Calsci Upload");
     terminal.show(true);

@@ -38,6 +38,10 @@
       {
         "command": "calsci.openRepl",
         "title": "Calsci: Open REPL"
+      },
+      {
+        "command": "calsci.fetchApps",
+        "title": "Calsci: Fetch Installed Apps"
       }
     ],
     "viewsContainers": {

@@ -4,7 +4,7 @@ const path = require("path");
 
 async function makeApp(outputChannel) {
   try {
-    // 1️⃣ Open folder picker
+    // open folder picker
     const folderUris = await vscode.window.showOpenDialog({
       canSelectFolders: true,
       canSelectFiles: false,
@@ -22,7 +22,7 @@ async function makeApp(outputChannel) {
     outputChannel.appendLine(`Selected folder: ${folderPath}`);
     vscode.window.showInformationMessage(`Selected folder: ${folderPath}`);
 
-    // 2️⃣ Create app.py if it doesn't exist
+    // create app.py if it doesn't exist
     const appFile = path.join(folderPath, "app.py");
     if (!fs.existsSync(appFile)) {
       fs.writeFileSync(
@@ -34,7 +34,7 @@ async function makeApp(outputChannel) {
       outputChannel.appendLine(`app.py already exists at ${appFile}`);
     }
 
-    // 3️⃣ Open app.py in editor
+    // open app.py in editor
     const doc = await vscode.workspace.openTextDocument(appFile);
     await vscode.window.showTextDocument(doc);
 

@@ -5,6 +5,8 @@ const { uploadFile } = require("./src/uploadManager");
 const { getDeviceInfo } = require("./src/deviceManager");
 const { openREPL } = require("./src/replManager");
 
+const { fetchInstalledApps } = require("./src/fetchApps");
+
 class CalsciTreeDataProvider {
   constructor() {}
 
@@ -28,6 +30,8 @@ class CalsciTreeDataProvider {
       { label: "🔹 Upload Code", command: "calsci.uploadCode" },
       { label: "🔹 Device Info", command: "calsci.deviceInfo" },
       { label: "🔹 Open REPL", command: "calsci.openRepl" },
+
+      { label: "🔹 Fetch Installed Apps", command: "calsci.fetchApps" },
     ];
   }
 }
@@ -77,6 +81,35 @@ function activate(context) {
 
   // Register commands
   context.subscriptions.push(
+    //register command for fetching installed apps
+    vscode.commands.registerCommand("calsci.fetchApps", async () => {
+      const ports = await SerialPort.list();
+      const target = ports.find(
+        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
+      );
+
+      if (!target) {
+        vscode.window.showErrorMessage("No device connected.");
+        return;
+      }
+
+      outputChannel.appendLine(
+        `Fetching installed apps from ${target.path}...`
+      );
+      fetchInstalledApps(target.path, (err, apps) => {
+        if (err) {
+          vscode.window.showErrorMessage(err);
+          outputChannel.appendLine(err);
+        } else {
+          vscode.window.showInformationMessage(`Fetched ${apps.length} apps`);
+          outputChannel.show(true);
+          outputChannel.appendLine("=== Installed Apps ===");
+          apps.forEach((app) => outputChannel.appendLine(app));
+        }
+      });
+    }),
+
+    //regiter command for checking device status
     vscode.commands.registerCommand("calsci.checkStatus", async () => {
       const ports = await SerialPort.list();
       const target = ports.find(
@@ -91,6 +124,7 @@ function activate(context) {
       await makeApp(outputChannel);
     }),
 
+    //register command for uploading code or file
     vscode.commands.registerCommand("calsci.uploadCode", async () => {
       const ports = await SerialPort.list();
       const target = ports.find(
@@ -100,6 +134,7 @@ function activate(context) {
       else vscode.window.showErrorMessage("No device connected.");
     }),
 
+    //register command for getting device info
     vscode.commands.registerCommand("calsci.deviceInfo", () => {
       getDeviceInfo((err, info) => {
         if (err) vscode.window.showErrorMessage("Error: " + err);
@@ -112,6 +147,7 @@ function activate(context) {
       });
     }),
 
+    //register command for opening repl
     vscode.commands.registerCommand("calsci.openRepl", async () => {
       const ports = await SerialPort.list();
       const target = ports.find(
@@ -121,6 +157,7 @@ function activate(context) {
       else vscode.window.showErrorMessage("No device connected.");
     }),
 
+    //register command for showing menu
     vscode.commands.registerCommand("calsci.showMenu", async () => {
       const statusText = statusBarItem.text;
       if (!statusText.includes("Connected")) {
