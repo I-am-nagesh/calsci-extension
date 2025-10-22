@@ -6,6 +6,7 @@ const { getDeviceInfo } = require("./src/deviceManager");
 const { openREPL } = require("./src/replManager");
 
 const { fetchInstalledApps } = require("./src/fetchApps");
+const { AppsProvider, openApp } = require("./src/appView");
 
 class CalsciTreeDataProvider {
   constructor() {}
@@ -79,6 +80,10 @@ function activate(context) {
   const provider = new CalsciTreeDataProvider();
   vscode.window.registerTreeDataProvider("calsciView", provider);
 
+  // // Sidebar for installed apps
+  // const appsProvider = new AppsProvider(null, outputChannel);
+  // vscode.window.registerTreeDataProvider("calsciAppsView", appsProvider);
+
   // Register commands
   context.subscriptions.push(
     //register command for fetching installed apps
@@ -105,8 +110,38 @@ function activate(context) {
           outputChannel.show(true);
           outputChannel.appendLine("=== Installed Apps ===");
           apps.forEach((app) => outputChannel.appendLine(app));
+
+          // register and refresh only when apps are fetch
+          const appsProvider = new AppsProvider(target.path, outputChannel);
+          vscode.window.registerTreeDataProvider(
+            "calsciAppsView",
+            appsProvider
+          );
+
+          // refreshing sidebar
+          appsProvider.refresh(apps);
+
+          // installed app view
+          vscode.commands.executeCommand(
+            "workbench.view.extension.calsciSidebar"
+          );
         }
       });
+    }),
+
+    // open app command (used by AppsProvider)
+    vscode.commands.registerCommand("calsci.openApp", async (appName) => {
+      const ports = await SerialPort.list();
+      const target = ports.find(
+        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
+      );
+
+      if (!target) {
+        vscode.window.showErrorMessage("No device connected.");
+        return;
+      }
+
+      openApp(target.path, appName, outputChannel);
     }),
 
     //regiter command for checking device status
