@@ -22,23 +22,47 @@ async function makeApp(outputChannel) {
     outputChannel.appendLine(`Selected folder: ${folderPath}`);
     vscode.window.showInformationMessage(`Selected folder: ${folderPath}`);
 
-    // create app.py if it doesn't exist
-    const appFile = path.join(folderPath, "app.py");
+    //asking for app file name
+    const appName = await vscode.window.showInputBox({
+      prompt: "Enter your app file name (e.g. myApp or myApp.py)",
+      placeHolder: "myApp",
+      validateInput: (value) => {
+        if (!value || value.trim() === "") return "File name cannot be empty.";
+        if (/[<>:"/\\|?*\x00-\x1F]/.test(value))
+          return "Invalid characters in file name.";
+        return null;
+      },
+    });
+
+    if (!appName) {
+      vscode.window.showWarningMessage("App creation cancelled.");
+      outputChannel.appendLine("App creation cancelled by user.");
+      return;
+    }
+
+    //ensuring it ends with .py
+    const finalName = appName.endsWith(".py") ? appName : `${appName}.py`;
+    const appFile = path.join(folderPath, finalName);
+
+    //creating if it does not exist
     if (!fs.existsSync(appFile)) {
       fs.writeFileSync(
         appFile,
-        `# Simple Calsci App\nprint("Hello Calsci!")`
+        `# ${finalName}\nprint("Hello from ${finalName}!")`
       );
-      outputChannel.appendLine(`Created app.py at ${appFile}`);
+      outputChannel.appendLine(`✅ Created ${finalName} at ${appFile}`);
     } else {
-      outputChannel.appendLine(`app.py already exists at ${appFile}`);
+      outputChannel.appendLine(`⚠️ File already exists: ${appFile}`);
+      vscode.window.showWarningMessage(`File already exists: ${finalName}`);
     }
 
     // open app.py in editor
     const doc = await vscode.workspace.openTextDocument(appFile);
     await vscode.window.showTextDocument(doc);
 
-    vscode.window.showInformationMessage("Simple Calsci app is ready for coding!");
+    vscode.window.showInformationMessage(
+      `Calsci app "${finalName}" is ready for coding!`
+    );
   } catch (err) {
     vscode.window.showErrorMessage("Error creating app: " + err.message);
     outputChannel.appendLine("Error: " + err.message);
