@@ -1,7 +1,7 @@
 const { exec } = require("child_process");
 
 function fetchInstalledApps(port, callback) {
-  const command = `mpremote connect ${port} ls installed_app`;
+  const command = `mpremote connect ${port} fs ls :/apps/installed_apps`;
 
   exec(command, (error, stdout, stderr) => {
     if (error) {

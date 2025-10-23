@@ -40,7 +40,8 @@ class AppsProvider {
 }
 
 function openApp(port, appName, outputChannel) {
-  const command = `mpremote connect ${port} fs cat :/installed_app/${appName}`;
+  //command or file path in esp32 for apps
+  const command = `mpremote connect ${port} fs cat :/apps/installed_apps/${appName}`;
   exec(command, (error, stdout, stderr) => {
     if (error) {
       vscode.window.showErrorMessage(
