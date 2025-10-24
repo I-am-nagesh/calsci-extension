@@ -7,6 +7,9 @@ const { openREPL } = require("./src/replManager");
 
 const { fetchInstalledApps } = require("./src/fetchApps");
 const { AppsProvider, openApp } = require("./src/appView");
+const { ensurePythonAndMpremote } = require("./src/envHelper");
+
+const { checkDevice } = require("./src/deviceChecker");
 
 class CalsciTreeDataProvider {
   constructor() {}
@@ -33,6 +36,7 @@ class CalsciTreeDataProvider {
       { label: "🔹 Open REPL", command: "calsci.openRepl" },
 
       { label: "🔹 Fetch Installed Apps", command: "calsci.fetchApps" },
+      { label: "🔹 Check Environment", command: "calsci.checkEnv" },
     ];
   }
 }
@@ -50,30 +54,12 @@ function activate(context) {
   statusBarItem.show();
   context.subscriptions.push(statusBarItem);
 
-  // Device check
-  async function checkDevice() {
-    try {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) =>
-          p.vendorId === "10C4" ||
-          (p.manufacturer &&
-            (p.manufacturer.includes("Espressif") ||
-              p.manufacturer.includes("Silicon"))) ||
-          p.path.includes("ttyUSB") ||
-          p.path.includes("COM")
-      );
-
-      if (target) statusBarItem.text = `Calsci: Connected (${target.path})`;
-      else statusBarItem.text = "Calsci: Not Connected";
-    } catch (err) {
-      console.error("Device check error:", err);
-      statusBarItem.text = "Calsci: Error";
-    }
+  // Device check interval
+  async function updateDeviceStatus() {
+    await checkDevice(statusBarItem, outputChannel);
   }
-
-  checkDevice();
-  const interval = setInterval(checkDevice, 5000);
+  updateDeviceStatus();
+  const interval = setInterval(updateDeviceStatus, 5000);
   context.subscriptions.push({ dispose: () => clearInterval(interval) });
 
   // Tree view provider
@@ -86,6 +72,11 @@ function activate(context) {
 
   // Register commands
   context.subscriptions.push(
+    vscode.commands.registerCommand("calsci.checkEnv", async () => {
+      const ready = await ensurePythonAndMpremote(outputChannel);
+      if (ready)
+        vscode.window.showInformationMessage("Environment looks good!");
+    }),
     //register command for fetching installed apps
     vscode.commands.registerCommand("calsci.fetchApps", async () => {
       const ports = await SerialPort.list();

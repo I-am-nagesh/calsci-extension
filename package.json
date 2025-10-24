@@ -46,6 +46,11 @@
       {
         "command": "calsci.openApp",
         "title": "Open Installed App"
+      },
+      {
+        "command": "calsci.checkEnv",
+        "title": "Calsci: Check Environment",
+        "category": "Calsci"
       }
     ],
     "viewsContainers": {
