@@ -50,9 +50,9 @@ async function makeApp(outputChannel) {
         appFile,
         `# ${finalName}\nprint("Hello from ${finalName}!")`
       );
-      outputChannel.appendLine(`✅ Created ${finalName} at ${appFile}`);
+      outputChannel.appendLine(`Created ${finalName} at ${appFile}`);
     } else {
-      outputChannel.appendLine(`⚠️ File already exists: ${appFile}`);
+      outputChannel.appendLine(`File already exists: ${appFile}`);
       vscode.window.showWarningMessage(`File already exists: ${finalName}`);
     }
 

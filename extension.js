@@ -1,15 +1,16 @@
 const vscode = require("vscode");
-const { SerialPort } = require("serialport");
 const { makeApp } = require("./src/buildApp");
 const { uploadFile } = require("./src/uploadManager");
-const { getDeviceInfo } = require("./src/deviceManager");
+const {
+  initDeviceWatcher,
+  getConnectedPort,
+  getDeviceInfo,
+} = require("./src/deviceManager");
 const { openREPL } = require("./src/replManager");
 
 const { fetchInstalledApps } = require("./src/fetchApps");
 const { AppsProvider, openApp } = require("./src/appView");
 const { ensurePythonAndMpremote } = require("./src/envHelper");
-
-const { checkDevice } = require("./src/deviceChecker");
 
 class CalsciTreeDataProvider {
   constructor() {}
@@ -55,12 +56,9 @@ function activate(context) {
   context.subscriptions.push(statusBarItem);
 
   // Device check interval
-  async function updateDeviceStatus() {
-    await checkDevice(statusBarItem, outputChannel);
-  }
-  updateDeviceStatus();
-  const interval = setInterval(updateDeviceStatus, 5000);
-  context.subscriptions.push({ dispose: () => clearInterval(interval) });
+  initDeviceWatcher(statusBarItem, outputChannel);
+
+  context.subscriptions.push(outputChannel);
 
   // Tree view provider
   const provider = new CalsciTreeDataProvider();
@@ -79,71 +77,95 @@ function activate(context) {
     }),
     //register command for fetching installed apps
     vscode.commands.registerCommand("calsci.fetchApps", async () => {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
-      );
+      // const ports = await SerialPort.list();
+      // const target = ports.find(
+      //   (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
+      // );
 
-      if (!target) {
-        vscode.window.showErrorMessage("No device connected.");
-        return;
-      }
+      // if (!target) {
+      //   vscode.window.showErrorMessage("No device connected.");
+      //   return;
+      // }
 
-      outputChannel.appendLine(
-        `Fetching installed apps from ${target.path}...`
-      );
-      fetchInstalledApps(target.path, (err, apps) => {
-        if (err) {
-          vscode.window.showErrorMessage(err);
-          outputChannel.appendLine(err);
-        } else {
+      // outputChannel.appendLine(
+      //   `Fetching installed apps from ${target.path}...`
+      // );
+      // fetchInstalledApps(target.path, (err, apps) => {
+      //   if (err) {
+      //     vscode.window.showErrorMessage(err);
+      //     outputChannel.appendLine(err);
+      //   } else {
+      //     vscode.window.showInformationMessage(`Fetched ${apps.length} apps`);
+      //     outputChannel.show(true);
+      //     outputChannel.appendLine("=== Installed Apps ===");
+      //     apps.forEach((app) => outputChannel.appendLine(app));
+
+      //     // register and refresh only when apps are fetch
+      //     const appsProvider = new AppsProvider(target.path, outputChannel);
+      //     vscode.window.registerTreeDataProvider(
+      //       "calsciAppsView",
+      //       appsProvider
+      //     );
+
+      //     // refreshing sidebar
+      //     appsProvider.refresh(apps);
+
+      //     // installed app view
+      //     vscode.commands.executeCommand(
+      //       "workbench.view.extension.calsciSidebar"
+      //     );
+      //   }
+      // });
+
+      fetchInstalledApps(
+        vscode.window.createOutputChannel("Calsci"),
+        async (err, apps) => {
+          if (err) {
+            vscode.window.showErrorMessage(err);
+            return;
+          }
+
           vscode.window.showInformationMessage(`Fetched ${apps.length} apps`);
+
+          const outputChannel = vscode.window.createOutputChannel("Calsci");
           outputChannel.show(true);
           outputChannel.appendLine("=== Installed Apps ===");
           apps.forEach((app) => outputChannel.appendLine(app));
 
-          // register and refresh only when apps are fetch
-          const appsProvider = new AppsProvider(target.path, outputChannel);
+          // Initialize AppsProvider and register sidebar
+          const appsProvider = new AppsProvider(outputChannel);
           vscode.window.registerTreeDataProvider(
             "calsciAppsView",
             appsProvider
           );
 
-          // refreshing sidebar
+          // Refresh sidebar with fetched apps
           appsProvider.refresh(apps);
 
-          // installed app view
+          // Show sidebar
           vscode.commands.executeCommand(
             "workbench.view.extension.calsciSidebar"
           );
         }
-      });
+      );
     }),
 
     // open app command (used by AppsProvider)
     vscode.commands.registerCommand("calsci.openApp", async (appName) => {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
-      );
-
-      if (!target) {
-        vscode.window.showErrorMessage("No device connected.");
-        return;
-      }
-
-      openApp(target.path, appName, outputChannel);
+      const outputChannel = vscode.window.createOutputChannel("Calsci");
+      await openApp(appName, outputChannel);
     }),
-
     //regiter command for checking device status
     vscode.commands.registerCommand("calsci.checkStatus", async () => {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
-      );
-      vscode.window.showInformationMessage(
-        target ? `Device connected: ${target.path}` : "No device connected"
-      );
+      const outputChannel = vscode.window.createOutputChannel("Calsci");
+      const port = await getConnectedPort(outputChannel);
+      if (port) {
+        vscode.window.showInformationMessage(`Device connected: ${port}`);
+        outputChannel.appendLine(`Device connected: ${port}`);
+      } else {
+        vscode.window.showWarningMessage("No Calsci device connected.");
+        outputChannel.appendLine("No device connected.");
+      }
     }),
 
     vscode.commands.registerCommand("calsci.makeApp", async () => {
@@ -152,20 +174,26 @@ function activate(context) {
 
     //register command for uploading code or file
     vscode.commands.registerCommand("calsci.uploadCode", async () => {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
-      );
-      if (target) uploadFile(target.path);
-      else vscode.window.showErrorMessage("No device connected.");
+      try {
+        const port = await getConnectedPort(outputChannel);
+        if (!port) {
+          vscode.window.showErrorMessage("No device connected.");
+          return;
+        }
+
+        await uploadFile(outputChannel);
+      } catch (err) {
+        vscode.window.showErrorMessage("Upload failed: " + err.message);
+      }
     }),
 
     //register command for getting device info
-    vscode.commands.registerCommand("calsci.deviceInfo", () => {
-      getDeviceInfo((err, info) => {
-        if (err) vscode.window.showErrorMessage("Error: " + err);
-        else {
-          vscode.window.showInformationMessage(info);
+    vscode.commands.registerCommand("calsci.deviceInfo", async () => {
+      getDeviceInfo(outputChannel, (err, info) => {
+        if (err) {
+          vscode.window.showErrorMessage("Error: " + err);
+        } else {
+          vscode.window.showInformationMessage("Device info fetched!");
           outputChannel.show(true);
           outputChannel.appendLine("=== Device Info ===");
           outputChannel.appendLine(info);
@@ -175,12 +203,7 @@ function activate(context) {
 
     //register command for opening repl
     vscode.commands.registerCommand("calsci.openRepl", async () => {
-      const ports = await SerialPort.list();
-      const target = ports.find(
-        (p) => p.path.includes("ttyUSB") || p.path.includes("COM")
-      );
-      if (target) openREPL(target.path);
-      else vscode.window.showErrorMessage("No device connected.");
+      await openREPL(outputChannel);
     }),
 
     //register command for showing menu

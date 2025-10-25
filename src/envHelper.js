@@ -42,7 +42,7 @@ async function ensurePythonAndMpremote(outputChannel) {
     vscode.window.showErrorMessage(
       "Python is not installed. Please install Python 3.7+ from python.org or Microsoft Store, then restart VS Code."
     );
-    outputChannel.appendLine("❌ Python not found.");
+    outputChannel.appendLine("Python not found.");
     return false;
   }
 
@@ -63,12 +63,12 @@ async function ensurePythonAndMpremote(outputChannel) {
       );
       return false;
     } else {
-      outputChannel.appendLine("⚠️ mpremote installation skipped by user.");
+      outputChannel.appendLine("mpremote installation skipped by user.");
       return false;
     }
   }
 
-  outputChannel.appendLine("✅ Python and mpremote are ready.");
+  outputChannel.appendLine("Python and mpremote are ready.");
   return true;
 }
 

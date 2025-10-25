@@ -1,19 +1,29 @@
 const vscode = require("vscode");
+const { getConnectedPort } = require("./deviceManager");
 
-function openREPL(port) {
-  // Open a dedicated terminal in VS Code
-  const terminal = vscode.window.createTerminal(`Calsci REPL (${port})`);
-  terminal.show(true);
+async function openREPL(outputChannel) {
+  try {
+    const port = await getConnectedPort(outputChannel);
+    if (!port) {
+      vscode.window.showErrorMessage("No Calsci device connected.");
+      return;
+    }
 
-  // Command to start mpremote REPL
-  const cmd = `mpremote connect ${port} repl`;
+    const terminal = vscode.window.createTerminal(`Calsci REPL (${port})`);
+    terminal.show(true);
 
-  terminal.sendText(cmd);
-  vscode.window.showInformationMessage(
-    `REPL started on ${port}. Check the terminal.`
-  );
+    const cmd = `mpremote connect ${port} repl`;
+    terminal.sendText(cmd);
+
+    outputChannel.appendLine(`REPL started on ${port}`);
+    vscode.window.showInformationMessage(
+      `Calsci REPL started on ${port}. Check the terminal.`
+    );
+  } catch (err) {
+    const msg = `Failed to start REPL: ${err.message}`;
+    outputChannel.appendLine(msg);
+    vscode.window.showErrorMessage(msg);
+  }
 }
 
-module.exports = {
-  openREPL,
-};
+module.exports = { openREPL };
