@@ -12,6 +12,8 @@ const { fetchInstalledApps } = require("./src/fetchApps");
 const { AppsProvider, openApp } = require("./src/appView");
 const { ensurePythonAndMpremote } = require("./src/envHelper");
 
+const { showWelcomePage } = require("./src/webview/welcome");
+
 class CalsciTreeDataProvider {
   constructor() {}
 
@@ -237,6 +239,11 @@ function activate(context) {
       }
     })
   );
+
+  if (!context.globalState.get("calsci.welcomeShown")) {
+    showWelcomePage(context);
+    context.globalState.update("calsci.welcomeShown", true);
+  }
 
   console.log("Calsci extension activated!");
 }
