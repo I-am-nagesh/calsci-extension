@@ -70,12 +70,16 @@
     "views": {
       "calsciSidebar": [
         {
-          "id": "calsciView",
-          "name": "Calsci App Builder"
+          "id": "calsciAppsView",
+          "name": "Installed Apps",
+          "order": 1
+
         },
         {
-          "id": "calsciAppsView",
-          "name": "Installed Apps"
+           "id": "calsciView",
+           "name": "Calsci App Builder",
+           "order": 2
+
         }
       ]
     }
