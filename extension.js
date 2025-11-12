@@ -32,14 +32,13 @@ class CalsciTreeDataProvider {
 
   getChildren() {
     return [
-      { label: "🔹 Connect Device", command: "calsci.checkStatus" },
-      { label: "🔹 Make App", command: "calsci.makeApp" },
-      { label: "🔹 Upload Code", command: "calsci.uploadCode" },
-      { label: "🔹 Device Info", command: "calsci.deviceInfo" },
-      { label: "🔹 Open REPL", command: "calsci.openRepl" },
-
-      { label: "🔹 Fetch Installed Apps", command: "calsci.fetchApps" },
       { label: "🔹 Check Environment", command: "calsci.checkEnv" },
+      { label: "🔹 Connect Device", command: "calsci.checkStatus" },
+      { label: "🔹 Device Info", command: "calsci.deviceInfo" },
+      { label: "🔹 Make App", command: "calsci.makeApp" },
+      { label: "🔹 Upload App", command: "calsci.uploadCode" },
+      { label: "🔹 Open REPL", command: "calsci.openRepl" },
+      { label: "🔹 Installed Apps", command: "calsci.fetchApps" },
     ];
   }
 }
@@ -253,6 +252,10 @@ function activate(context) {
           break;
       }
     })
+  );
+
+  vscode.commands.executeCommand(
+    "workbench.view.extension.calsciSidebar.focus"
   );
 
   console.log("Calsci extension activated!");
