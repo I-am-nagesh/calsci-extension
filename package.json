@@ -73,13 +73,11 @@
           "id": "calsciAppsView",
           "name": "Installed Apps",
           "order": 1
-
         },
         {
-           "id": "calsciView",
-           "name": "Calsci App Builder",
-           "order": 2
-
+          "id": "calsciView",
+          "name": "Calsci App Builder",
+          "order": 2
         }
       ]
     }

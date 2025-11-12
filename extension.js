@@ -32,13 +32,14 @@ class CalsciTreeDataProvider {
 
   getChildren() {
     return [
-      { label: "🔹 Check Environment", command: "calsci.checkEnv" },
-      { label: "🔹 Connect Device", command: "calsci.checkStatus" },
-      { label: "🔹 Device Info", command: "calsci.deviceInfo" },
-      { label: "🔹 Make App", command: "calsci.makeApp" },
-      { label: "🔹 Upload App", command: "calsci.uploadCode" },
-      { label: "🔹 Open REPL", command: "calsci.openRepl" },
-      { label: "🔹 Installed Apps", command: "calsci.fetchApps" },
+      { label: "🏠 Home Page", command: "calsci.openHome" },
+      { label: "🧪 Check Environment", command: "calsci.checkEnv" },
+      { label: "🔌 Connect Device", command: "calsci.checkStatus" },
+      { label: "ℹ️ Device Info", command: "calsci.deviceInfo" },
+      { label: "📦 Make App", command: "calsci.makeApp" },
+      { label: "🔼 Upload App", command: "calsci.uploadCode" },
+      { label: "⌨️ Open REPL", command: "calsci.openRepl" },
+      { label: "📲 Installed Apps", command: "calsci.fetchApps" },
     ];
   }
 }
@@ -46,14 +47,10 @@ class CalsciTreeDataProvider {
 function activate(context) {
   const outputChannel = vscode.window.createOutputChannel("Calsci");
 
-  // showing welcome page on first activation
-  const alreadyShown = context.globalState.get("calsci.welcomeShown");
-  if (!alreadyShown) {
-    setTimeout(() => {
-      showWelcomePage(context);
-      context.globalState.update("calsci.welcomeShown", true);
-    }, 1000);
-  }
+  // skowing welcome page instantly *after* the extension is ready
+  setTimeout(() => {
+    showWelcomePage(context);
+  }, 0);
 
   // registernign command to open manually
   const disposable = vscode.commands.registerCommand("calsci.openHome", () => {
