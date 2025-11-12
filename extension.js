@@ -47,6 +47,21 @@ class CalsciTreeDataProvider {
 function activate(context) {
   const outputChannel = vscode.window.createOutputChannel("Calsci");
 
+  // showing welcome page on first activation
+  const alreadyShown = context.globalState.get("calsci.welcomeShown");
+  if (!alreadyShown) {
+    setTimeout(() => {
+      showWelcomePage(context);
+      context.globalState.update("calsci.welcomeShown", true);
+    }, 1000);
+  }
+
+  // registernign command to open manually
+  const disposable = vscode.commands.registerCommand("calsci.openHome", () => {
+    showWelcomePage(context);
+  });
+  context.subscriptions.push(disposable);
+
   // Status bar
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -239,11 +254,6 @@ function activate(context) {
       }
     })
   );
-
-  if (!context.globalState.get("calsci.welcomeShown")) {
-    showWelcomePage(context);
-    context.globalState.update("calsci.welcomeShown", true);
-  }
 
   console.log("Calsci extension activated!");
 }

@@ -17,6 +17,10 @@
   "contributes": {
     "commands": [
       {
+        "command": "calsci.openHome",
+        "title": "Calsci: Open Home"
+      },
+      {
         "command": "calsci.showMenu",
         "title": "Calsci: Show Menu"
       },
