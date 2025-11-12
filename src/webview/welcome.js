@@ -226,7 +226,6 @@ function getWebviewContent(context, webview, nonce) {
               <li><a class="open-link" data-url="https://calsci.io/software/native">Documentation</a></li>
               <li><a class="open-link" data-url="hhttps://calsci.io/software/native">How to Make an App</a></li>
               <li><a class="open-link" data-url="https://calsci.io/software/native">Calsci SDK Reference</a></li>
-              <li><a class="open-link" data-url="https://calsci.io/software/native">Support Portal</a></li>
             </ul>
           </div>
         </div>

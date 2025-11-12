@@ -140,12 +140,12 @@ function activate(context) {
 
           vscode.window.showInformationMessage(`Fetched ${apps.length} apps`);
 
-          const outputChannel = vscode.window.createOutputChannel("Calsci");
-          outputChannel.show(true);
-          outputChannel.appendLine("=== Installed Apps ===");
-          apps.forEach((app) => outputChannel.appendLine(app));
+          // const outputChannel = vscode.window.createOutputChannel("Calsci");
+          // outputChannel.show(true);
+          // outputChannel.appendLine("=== Installed Apps ===");
+          // apps.forEach((app) => outputChannel.appendLine(app));
 
-          // Initialize AppsProvider and register sidebar
+          // // Initialize AppsProvider and register sidebar
           const appsProvider = new AppsProvider(outputChannel);
           vscode.window.registerTreeDataProvider(
             "calsciAppsView",
@@ -206,10 +206,10 @@ function activate(context) {
         if (err) {
           vscode.window.showErrorMessage("Error: " + err);
         } else {
-          vscode.window.showInformationMessage("Device info fetched!");
-          outputChannel.show(true);
-          outputChannel.appendLine("=== Device Info ===");
-          outputChannel.appendLine(info);
+          vscode.window.showInformationMessage(info, { modal: true });
+          // outputChannel.show(true);
+          // outputChannel.appendLine("=== Device Info ===");
+          // outputChannel.appendLine(info);
         }
       });
     }),

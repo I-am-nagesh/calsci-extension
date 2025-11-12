@@ -14,18 +14,18 @@ async function fetchInstalledApps(outputChannel, callback) {
     }
 
     const command = `mpremote connect "${port}" fs ls :/apps/installed_apps`;
-    outputChannel.appendLine(`Fetching installed apps from ${port}...`);
+    // outputChannel.appendLine(`Fetching installed apps from ${port}...`);
 
     exec(command, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
       if (error) {
         const msg = `Error fetching apps: ${stderr || error.message}`;
-        outputChannel.appendLine(msg);
+        // outputChannel.appendLine(msg);
         callback(msg, null);
         return;
       }
 
       if (stderr) {
-        outputChannel.appendLine(`Stderr: ${stderr}`);
+        // outputChannel.appendLine(`Stderr: ${stderr}`);
       }
 
       //parsing app list clearly
@@ -46,12 +46,12 @@ async function fetchInstalledApps(outputChannel, callback) {
         })
         .filter((value, index, self) => value && self.indexOf(value) === index);
 
-      outputChannel.appendLine(`Found ${apps.length} apps.`);
+      // outputChannel.appendLine(`Found ${apps.length} apps.`);
       callback(null, apps);
     });
   } catch (err) {
     const msg = `Unexpected error: ${err.message}`;
-    outputChannel.appendLine(msg);
+    // outputChannel.appendLine(msg);
     callback(msg, null);
   }
 }

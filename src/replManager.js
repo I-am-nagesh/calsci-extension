@@ -15,13 +15,13 @@ async function openREPL(outputChannel) {
     const cmd = `mpremote connect ${port} repl`;
     terminal.sendText(cmd);
 
-    outputChannel.appendLine(`REPL started on ${port}`);
+    // outputChannel.appendLine(`REPL started on ${port}`);
     vscode.window.showInformationMessage(
       `Calsci REPL started on ${port}. Check the terminal.`
     );
   } catch (err) {
     const msg = `Failed to start REPL: ${err.message}`;
-    outputChannel.appendLine(msg);
+    // outputChannel.appendLine(msg);
     vscode.window.showErrorMessage(msg);
   }
 }

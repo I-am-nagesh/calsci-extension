@@ -68,7 +68,7 @@ async function ensurePythonAndMpremote(outputChannel) {
     }
   }
 
-  outputChannel.appendLine("Python and mpremote are ready.");
+  // outputChannel.appendLine("Python and mpremote are ready.");
   return true;
 }
 

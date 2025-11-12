@@ -37,14 +37,14 @@ async function checkDevice(statusBarItem, outputChannel) {
     if (port) {
       connectedPort = port.path;
       statusBarItem.text = `Calsci: Connected (${connectedPort})`;
-      outputChannel.appendLine(`Device connected: ${connectedPort}`);
+      // outputChannel.appendLine(`Device connected: ${connectedPort}`);
       return connectedPort;
     } else {
       connectedPort = null;
       statusBarItem.text = "Calsci: Not Connected";
-      outputChannel.appendLine(
-        "Device not detected. Possible driver issue or unplugged device."
-      );
+      // outputChannel.appendLine(
+      //   "Device not detected. Possible driver issue or unplugged device."
+      // );
 
       const choice = await vscode.window.showWarningMessage(
         "Calsci device not detected. Ensure the device is plugged in and drivers are installed.",
@@ -62,7 +62,7 @@ async function checkDevice(statusBarItem, outputChannel) {
   } catch (err) {
     connectedPort = null;
     statusBarItem.text = "Calsci: Error";
-    outputChannel.appendLine(`Device check failed: ${err.message}`);
+    // outputChannel.appendLine(`Device check failed: ${err.message}`);
     console.error("Device check error:", err);
     return null;
   }
@@ -75,11 +75,11 @@ function initDeviceWatcher(statusBarItem, outputChannel) {
     const port = await findESP32Port();
     if (port && port.path !== connectedPort) {
       connectedPort = port.path;
-      outputChannel.appendLine(`Device changed: ${connectedPort}`);
+      // outputChannel.appendLine(`Device changed: ${connectedPort}`);
       statusBarItem.text = `Calsci: Connected (${connectedPort})`;
     } else if (!port && connectedPort) {
       connectedPort = null;
-      outputChannel.appendLine("Device disconnected.");
+      // outputChannel.appendLine("Device disconnected.");
       statusBarItem.text = "Calsci: Not Connected";
     }
   }, 5000);
@@ -91,11 +91,11 @@ function initDeviceWatcher(statusBarItem, outputChannel) {
 async function getConnectedPort(outputChannel) {
   if (connectedPort) return connectedPort;
 
-  outputChannel.appendLine("No cached device found, checking...");
+  // outputChannel.appendLine("No cached device found, checking...");
   const port = await findESP32Port();
   if (port) {
     connectedPort = port.path;
-    outputChannel.appendLine(`Found device: ${connectedPort}`);
+    // outputChannel.appendLine(`Found device: ${connectedPort}`);
     return connectedPort;
   } else {
     vscode.window.showWarningMessage("No Calsci device connected.");
@@ -113,23 +113,23 @@ async function getDeviceInfo(outputChannel, callback) {
     }
 
     const command = `mpremote connect ${port} exec "import os; import sys; print('Platform:', sys.platform); print('Firmware:', os.uname())"`;
-    outputChannel.appendLine(`Fetching device info from ${port}...`);
+    // outputChannel.appendLine(`Fetching device info from ${port}...`);
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
         const msg = `Error getting device info: ${stderr || error.message}`;
-        outputChannel.appendLine(msg);
+        // outputChannel.appendLine(msg);
         callback(msg, null);
         return;
       }
 
       const info = stdout.trim();
-      outputChannel.appendLine(`Device info fetched:\n${info}`);
+      // outputChannel.appendLine(`Device info fetched:\n${info}`);
       callback(null, info);
     });
   } catch (err) {
     const msg = `Unexpected error: ${err.message}`;
-    outputChannel.appendLine(msg);
+    // outputChannel.appendLine(msg);
     callback(msg, null);
   }
 }
