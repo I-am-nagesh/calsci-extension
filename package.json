@@ -2,8 +2,12 @@
   "name": "calsci-extension",
   "displayName": "Calsci Extension",
   "description": "Micropython Calsci Extension fro ESP32",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "publisher": "calsci",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/I-am-nagesh/calsci-extension"
+  },
   "engines": {
     "vscode": "^1.105.0"
   },
